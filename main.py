@@ -6,6 +6,7 @@ from OpenGL.GL.framebufferobjects import *
 from OpenGL.GL.ARB.shadow import *
 import math
 from PIL import Image
+from src.Player import Player
 
 pygame.init()
 
@@ -14,11 +15,7 @@ display_height = 600
 pygame.display.set_mode((display_width, display_height), DOUBLEBUF | OPENGL)
 pygame.mouse.set_visible(False)
 
-player_x = 0.0
-player_y = 0.0
-player_z = 0.0
-
-player_speed = 0.05
+player = Player()
 player_rotation_speed = 0.5
 mouse_sensitivity = 0.1
 
@@ -134,7 +131,7 @@ def draw_cube(size, position):
 
 
 def handle_input():
-    global player_x, player_z, camera_yaw, camera_pitch
+    global camera_yaw, camera_pitch
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -147,17 +144,17 @@ def handle_input():
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_a]:
-        player_x += player_speed * math.sin(math.radians(camera_yaw - 90))
-        player_z += player_speed * math.cos(math.radians(camera_yaw - 90))
+        player.position[0] += player.speed * math.sin(math.radians(camera_yaw - 90))
+        player.position[2] += player.speed * math.cos(math.radians(camera_yaw - 90))
     if keys[pygame.K_d]:
-        player_x -= player_speed * math.sin(math.radians(camera_yaw - 90))
-        player_z -= player_speed * math.cos(math.radians(camera_yaw - 90))
+        player.position[0] -= player.speed * math.sin(math.radians(camera_yaw - 90))
+        player.position[2] -= player.speed * math.cos(math.radians(camera_yaw - 90))
     if keys[pygame.K_w]:
-        player_x -= player_speed * math.sin(math.radians(camera_yaw))
-        player_z -= player_speed * math.cos(math.radians(camera_yaw))
+        player.position[0] -= player.speed * math.sin(math.radians(camera_yaw))
+        player.position[2] -= player.speed * math.cos(math.radians(camera_yaw))
     if keys[pygame.K_s]:
-        player_x += player_speed * math.sin(math.radians(camera_yaw))
-        player_z += player_speed * math.cos(math.radians(camera_yaw))
+        player.position[0] += player.speed * math.sin(math.radians(camera_yaw))
+        player.position[2] += player.speed * math.cos(math.radians(camera_yaw))
 
     mouse_movement = pygame.mouse.get_rel()
     camera_yaw -= mouse_movement[0] * mouse_sensitivity
@@ -201,7 +198,7 @@ def update_camera():
     glLoadIdentity()
     glRotatef(-camera_pitch, 1, 0, 0)
     glRotatef(-camera_yaw, 0, 1, 0)
-    glTranslatef(-player_x, -player_y, -player_z)
+    glTranslatef(-player.position[0], -player.position[1], -player.position[2])
 
 def render_scene():
     glViewport(0, 0, display_width, display_height)
