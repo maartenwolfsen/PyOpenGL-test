@@ -23,42 +23,46 @@ pygame.mouse.set_visible(False)
 
 player = Player()
 camera = Camera()
+t1 = Transform(
+            Vector3(0, -1, 0),
+            Vector3(1, 1, 1),
+            Vector3(100, 1, 100)
+        )
+t2 = Transform(
+            Vector3(1, 0, 2),
+            Vector3(2, 2, 2),
+            Vector3(1, 1, 1)
+        )
+t3 = Transform(
+            Vector3(-1, 0, 2),
+            Vector3(2, 2, 2),
+            Vector3(1, 1, 1)
+        )
+t4 = Transform(
+            Vector3(-2, -0.25, 2),
+            Vector3(2, 2, 2),
+            Vector3(1, 0.5, 1)
+        )
 gameObjects = [
     GameObject(
-        Transform(
-            Vector3(0, -0.5, 0),
-            Vector3(1, 1, 1),
-            Vector3(10, 10, 10)
-        ),
+        t1,
         Plane(),
-        Collider()
+        Collider(t1)
     ),
     GameObject(
-        Transform(
-            Vector3(1, 0, 0),
-            Vector3(1, 1, 1),
-            Vector3(1, 1, 1)
-        ),
+        t2,
         Cube(),
-        Collider()
+        Collider(t2)
     ),
     GameObject(
-        Transform(
-            Vector3(-1, 0, 0),
-            Vector3(1, 1, 1),
-            Vector3(1, 1, 1)
-        ),
+        t3,
         Cube(),
-        Collider()
+        Collider(t3)
     ),
     GameObject(
-        Transform(
-            Vector3(-2, -0.25, 0),
-            Vector3(1, 1, 1),
-            Vector3(1, 0.5, 1)
-        ),
+        t4,
         Cube(),
-        Collider()
+        Collider(t4)
     )
 ]
 
@@ -92,18 +96,26 @@ def handle_input():
                 quit()
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_a]:
-        player.position[0] += player.speed * math.sin(math.radians(camera.yaw - 90))
-        player.position[2] += player.speed * math.cos(math.radians(camera.yaw - 90))
-    if keys[pygame.K_d]:
-        player.position[0] -= player.speed * math.sin(math.radians(camera.yaw - 90))
-        player.position[2] -= player.speed * math.cos(math.radians(camera.yaw - 90))
-    if keys[pygame.K_w]:
-        player.position[0] -= player.speed * math.sin(math.radians(camera.yaw))
-        player.position[2] -= player.speed * math.cos(math.radians(camera.yaw))
-    if keys[pygame.K_s]:
-        player.position[0] += player.speed * math.sin(math.radians(camera.yaw))
-        player.position[2] += player.speed * math.cos(math.radians(camera.yaw))
+
+    colliding = False
+
+    for go in gameObjects:
+        if go.collider.is_colliding(player):
+            colliding = True
+            break
+
+    if keys[pygame.K_a] and not colliding:
+        player.transform.position.x += player.speed * math.sin(math.radians(camera.yaw - 90))
+        player.transform.position.z += player.speed * math.cos(math.radians(camera.yaw - 90))
+    if keys[pygame.K_d] and not colliding:
+        player.transform.position.x -= player.speed * math.sin(math.radians(camera.yaw - 90))
+        player.transform.position.z -= player.speed * math.cos(math.radians(camera.yaw - 90))
+    if keys[pygame.K_w] and not colliding:
+        player.transform.position.x -= player.speed * math.sin(math.radians(camera.yaw))
+        player.transform.position.z -= player.speed * math.cos(math.radians(camera.yaw))
+    if keys[pygame.K_s] and not colliding:
+        player.transform.position.x += player.speed * math.sin(math.radians(camera.yaw))
+        player.transform.position.z += player.speed * math.cos(math.radians(camera.yaw))
 
     camera.move(pygame.mouse.get_rel())
 
@@ -117,7 +129,7 @@ def render_scene():
     gluPerspective(45, (display_width / display_height), 0.1, 50.0)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    camera.update(player.position)
+    camera.update(player.transform.position)
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 

@@ -16,4 +16,4 @@ class Camera:
         glLoadIdentity()
         glRotatef(-self.pitch, 1, 0, 0)
         glRotatef(-self.yaw, 0, 1, 0)
-        glTranslatef(-player_position[0], -player_position[1], -player_position[2])
+        glTranslatef(-player_position.x, -player_position.y, -player_position.z)
