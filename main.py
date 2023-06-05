@@ -9,6 +9,7 @@ from src.Texture import Texture
 
 from src.Vector3 import Vector3
 from src.GameObject import GameObject
+from src.Collider import Collider
 from src.components.Transform import Transform
 from src.primitives.Cube import Cube
 from src.primitives.Plane import Plane
@@ -30,7 +31,7 @@ gameObjects = [
             Vector3(10, 10, 10)
         ),
         Plane(),
-        "test"
+        Collider()
     ),
     GameObject(
         Transform(
@@ -39,7 +40,7 @@ gameObjects = [
             Vector3(1, 1, 1)
         ),
         Cube(),
-        "test"
+        Collider()
     ),
     GameObject(
         Transform(
@@ -48,7 +49,16 @@ gameObjects = [
             Vector3(1, 1, 1)
         ),
         Cube(),
-        "test"
+        Collider()
+    ),
+    GameObject(
+        Transform(
+            Vector3(-2, -0.25, 0),
+            Vector3(1, 1, 1),
+            Vector3(1, 0.5, 1)
+        ),
+        Cube(),
+        Collider()
     )
 ]
 
@@ -100,19 +110,6 @@ def handle_input():
     pygame.mouse.set_pos(display_width // 2, display_height // 2)
 
 
-def check_collision(position, size, point):
-    min_x = position[0] - size / 2
-    max_x = position[0] + size / 2
-    min_y = position[1] - size / 2
-    max_y = position[1] + size / 2
-    min_z = position[2] - size / 2
-    max_z = position[2] + size / 2
-
-    if min_x <= point[0] <= max_x and min_y <= point[1] <= max_y and min_z <= point[2] <= max_z:
-        return True
-    return False
-
-
 def render_scene():
     glViewport(0, 0, display_width, display_height)
     glMatrixMode(GL_PROJECTION)
@@ -152,10 +149,4 @@ normal_map_texture_id = texture.load("assets/materials/brickwall_normal.png")
 
 while True:
     handle_input()
-
-    #if check_collision(cube_position, cube_size, (player_x, player_y, player_z)):
-    #    player_x = 0.0
-    #    player_y = 0.0
-    #    player_z = 0.0
-
     render_scene()

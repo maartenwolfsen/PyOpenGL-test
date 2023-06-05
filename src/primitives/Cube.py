@@ -10,14 +10,14 @@ class Cube:
         glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE)
 
         vertices = [
-            [transform.scale.x / 2, -transform.scale.x / 2, -transform.scale.x / 2],
-            [transform.scale.x / 2, -transform.scale.x / 2, transform.scale.x / 2],
-            [-transform.scale.x / 2, -transform.scale.x / 2, transform.scale.x / 2],
-            [-transform.scale.x / 2, -transform.scale.x / 2, -transform.scale.x / 2],
-            [transform.scale.x / 2, transform.scale.x / 2, -transform.scale.x / 2],
-            [transform.scale.x / 2, transform.scale.x / 2, transform.scale.x / 2],
-            [-transform.scale.x / 2, transform.scale.x / 2, transform.scale.x / 2],
-            [-transform.scale.x / 2, transform.scale.x / 2, -transform.scale.x / 2]
+            [transform.scale.x / 2, -transform.scale.y / 2, -transform.scale.z / 2],
+            [transform.scale.x / 2, -transform.scale.y / 2, transform.scale.z / 2],
+            [-transform.scale.x / 2, -transform.scale.y / 2, transform.scale.z / 2],
+            [-transform.scale.x / 2, -transform.scale.y / 2, -transform.scale.z / 2],
+            [transform.scale.x / 2, transform.scale.y / 2, -transform.scale.z / 2],
+            [transform.scale.x / 2, transform.scale.y / 2, transform.scale.z / 2],
+            [-transform.scale.x / 2, transform.scale.y / 2, transform.scale.z / 2],
+            [-transform.scale.x / 2, transform.scale.y / 2, -transform.scale.z / 2]
         ]
 
         faces = [
