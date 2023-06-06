@@ -44,11 +44,11 @@ t4 = Transform(
             Vector3(1, 0.5, 1)
         )
 gameObjects = [
-    GameObject(
-        t1,
-        Plane(),
-        Collider(t1)
-    ),
+    #GameObject(
+    #    t1,
+    #    Plane(),
+    #    Collider(t1)
+    #),
     GameObject(
         t2,
         Cube(),
@@ -97,25 +97,35 @@ def handle_input():
 
     keys = pygame.key.get_pressed()
 
-    colliding = False
+    temp_player = Player()
+    t = player.transform
+    temp_player.transform = Transform(
+        Vector3(t.position.x, t.position.y, t.position.z),
+        Vector3(t.rotation.x, t.rotation.y, t.rotation.z),
+        Vector3(t.scale.x, t.scale.y, t.scale.z)
+    )
 
+    if keys[pygame.K_a]:
+        temp_player.transform.position.x += player.speed * math.sin(math.radians(camera.yaw - 90))
+        temp_player.transform.position.z += player.speed * math.cos(math.radians(camera.yaw - 90))
+    if keys[pygame.K_d]:
+        temp_player.transform.position.x -= player.speed * math.sin(math.radians(camera.yaw - 90))
+        temp_player.transform.position.z -= player.speed * math.cos(math.radians(camera.yaw - 90))
+    if keys[pygame.K_w]:
+        temp_player.transform.position.x -= player.speed * math.sin(math.radians(camera.yaw))
+        temp_player.transform.position.z -= player.speed * math.cos(math.radians(camera.yaw))
+    if keys[pygame.K_s]:
+        temp_player.transform.position.x += player.speed * math.sin(math.radians(camera.yaw))
+        temp_player.transform.position.z += player.speed * math.cos(math.radians(camera.yaw))
+
+    colliding = False
     for go in gameObjects:
-        if go.collider.is_colliding(player):
+        if go.collider.is_colliding(temp_player):
             colliding = True
             break
 
-    if keys[pygame.K_a] and not colliding:
-        player.transform.position.x += player.speed * math.sin(math.radians(camera.yaw - 90))
-        player.transform.position.z += player.speed * math.cos(math.radians(camera.yaw - 90))
-    if keys[pygame.K_d] and not colliding:
-        player.transform.position.x -= player.speed * math.sin(math.radians(camera.yaw - 90))
-        player.transform.position.z -= player.speed * math.cos(math.radians(camera.yaw - 90))
-    if keys[pygame.K_w] and not colliding:
-        player.transform.position.x -= player.speed * math.sin(math.radians(camera.yaw))
-        player.transform.position.z -= player.speed * math.cos(math.radians(camera.yaw))
-    if keys[pygame.K_s] and not colliding:
-        player.transform.position.x += player.speed * math.sin(math.radians(camera.yaw))
-        player.transform.position.z += player.speed * math.cos(math.radians(camera.yaw))
+    if not colliding:
+        player.transform = temp_player.transform
 
     camera.move(pygame.mouse.get_rel())
 
