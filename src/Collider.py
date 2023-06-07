@@ -1,4 +1,5 @@
 from OpenGL.GL import *
+from src.Vector3 import Vector3
 
 
 class Collider:
@@ -6,14 +7,49 @@ class Collider:
         self.transform = transform
 
     def is_colliding(self, collider):
-        return (
-            self.transform.position.x + self.transform.scale.x > collider.position.x
-            and self.transform.position.x < collider.position.x + collider.scale.x
-            and self.transform.position.y + self.transform.scale.y > collider.position.y
-            and self.transform.position.y < collider.position.y + collider.scale.y
-            and self.transform.position.z + self.transform.scale.z > collider.position.z
-            and self.transform.position.z < collider.position.z + collider.scale.z
-        )
+        # Calculate the half-sizes of the bounding boxes
+        self_half_size = self.transform.scale * 0.5
+        collider_half_size = collider.scale * 0.5
+
+        # Calculate the centers of the bounding boxes
+        self_center = self.transform.position
+        collider_center = collider.position
+
+        # Calculate the differences between the centers
+        center_diff = collider_center - self_center
+
+        # Check for overlap along the x-axis
+        if abs(center_diff.x) > (self_half_size.x + collider_half_size.x):
+            return False
+
+        # Check for overlap along the y-axis
+        if abs(center_diff.y) > (self_half_size.y + collider_half_size.y):
+            return False
+
+        # Check for overlap along the z-axis
+        if abs(center_diff.z) > (self_half_size.z + collider_half_size.z):
+            return False
+
+        # Check for overlap along the separating axes
+        separating_axes = [
+            Vector3(1, 0, 0),  # X-axis
+            Vector3(0, 1, 0),  # Y-axis
+            Vector3(0, 0, 1)  # Z-axis
+        ]
+
+        for axis in separating_axes:
+            # Project the vertices of the objects onto the separating axis
+            self_min = self_center.dot(axis) - self_half_size.dot(axis)
+            self_max = self_center.dot(axis) + self_half_size.dot(axis)
+            collider_min = collider_center.dot(axis) - collider_half_size.dot(axis)
+            collider_max = collider_center.dot(axis) + collider_half_size.dot(axis)
+
+            # Check for overlap on the separating axis
+            if (self_max < collider_min) or (self_min > collider_max):
+                return False
+
+        # If no separating axis has overlap, collision occurs
+        return True
 
     def draw(self):
         glDisable(GL_TEXTURE_2D)
