@@ -13,7 +13,7 @@ class Player:
 
         self.speed = 0.05
 
-    def move_player(self, direction, camera, gameObjects):
+    def move_player(self, direction, camera, game_objects):
         angle = math.radians(camera.yaw - 90) if direction in ['a', 'd'] else math.radians(camera.yaw)
         if direction in ['w', 'd']:
             angle += math.pi
@@ -23,11 +23,27 @@ class Player:
                                   self.transform.scale)
 
         collide = False
-        for o in gameObjects:
+        slide_vector = Vector3(0, 0, 0)
+        num_collisions = 0
+
+        for o in game_objects:
             if o.collider.is_colliding(temp_collider):
                 collide = True
-                break
+                num_collisions += 1
 
-        if not collide:
+                collision_vector = temp_collider.position - o.collider.transform.position
+                collision_vector.y = 0
+                collision_vector = collision_vector.normalize()
+
+                slide_vector += collision_vector
+
+        if collide:
+            if num_collisions > 0:
+                slide_vector = slide_vector.normalize() * (
+                            self.speed * 0.1 * num_collisions)
+
+            self.transform.position.x += slide_vector.x
+            self.transform.position.z += slide_vector.z
+        else:
             self.transform.position.x = new_x
             self.transform.position.z = new_z
