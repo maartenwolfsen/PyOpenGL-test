@@ -16,7 +16,7 @@ class Player:
     def move_player(self, direction, camera, gameObjects):
         angle = math.radians(camera.yaw - 90) if direction in ['a', 'd'] else math.radians(camera.yaw)
         if direction in ['w', 'd']:
-            angle += math.pi  # Add pi radians to reverse the angle for 's' and 'd'
+            angle += math.pi
         new_x = self.transform.position.x + self.speed * math.sin(angle)
         new_z = self.transform.position.z + self.speed * math.cos(angle)
         temp_collider = Transform(Vector3(new_x, self.transform.position.y, new_z), self.transform.rotation,
@@ -24,9 +24,10 @@ class Player:
 
         collide = False
         for o in gameObjects:
-            if not o.collider.is_colliding(temp_collider):
+            if o.collider.is_colliding(temp_collider):
                 collide = True
+                break
 
-        if collide:
+        if not collide:
             self.transform.position.x = new_x
             self.transform.position.z = new_z
