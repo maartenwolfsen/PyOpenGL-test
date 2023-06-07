@@ -14,6 +14,7 @@ from src.components.Transform import Transform
 from src.primitives.Cube import Cube
 from src.primitives.Plane import Plane
 
+DEBUG = True
 pygame.init()
 
 display_width = 800
@@ -29,17 +30,17 @@ t1 = Transform(
             Vector3(100, 1, 100)
         )
 t2 = Transform(
-            Vector3(1, 0, 2),
+            Vector3(1, 0, 4),
             Vector3(2, 2, 2),
             Vector3(1, 1, 1)
         )
 t3 = Transform(
-            Vector3(-1, 0, 2),
+            Vector3(-1, 0, 4),
             Vector3(2, 2, 2),
             Vector3(1, 1, 1)
         )
 t4 = Transform(
-            Vector3(-2, -0.25, 2),
+            Vector3(-2, -0.25, 4),
             Vector3(2, 2, 2),
             Vector3(1, 0.5, 1)
         )
@@ -97,38 +98,55 @@ def handle_input():
 
     keys = pygame.key.get_pressed()
 
-    temp_player = Player()
-    t = player.transform
-    temp_player.transform = Transform(
-        Vector3(t.position.x, t.position.y, t.position.z),
-        Vector3(t.rotation.x, t.rotation.y, t.rotation.z),
-        Vector3(t.scale.x, t.scale.y, t.scale.z)
+    colliding_front = False
+    colliding_right = False
+    colliding_back = False
+    colliding_left = False
+    t_front = Transform(
+        Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z + player.transform.scale.z),
+        Vector3(0, 0, 0),
+        Vector3(player.transform.scale.x, player.transform.scale.y, player.speed)
+    )
+    t_right = Transform(
+        Vector3(player.transform.position.x + player.transform.scale.x, player.transform.position.y, player.transform.position.z),
+        Vector3(0, 0, 0),
+        Vector3(player.speed, player.transform.scale.y, player.transform.scale.z)
+    )
+    t_back = Transform(
+        Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z - player.speed),
+        Vector3(0, 0, 0),
+        Vector3(player.transform.scale.x, player.transform.scale.y, player.speed)
+    )
+    t_left = Transform(
+        Vector3(player.transform.position.x - player.speed, player.transform.position.y, player.transform.position.z),
+        Vector3(0, 0, 0),
+        Vector3(player.speed, player.transform.scale.y, player.transform.scale.z)
     )
 
-    if keys[pygame.K_a]:
-        temp_player.transform.position.x += player.speed * math.sin(math.radians(camera.yaw - 90))
-        temp_player.transform.position.z += player.speed * math.cos(math.radians(camera.yaw - 90))
-    if keys[pygame.K_d]:
-        temp_player.transform.position.x -= player.speed * math.sin(math.radians(camera.yaw - 90))
-        temp_player.transform.position.z -= player.speed * math.cos(math.radians(camera.yaw - 90))
-    if keys[pygame.K_w]:
-        temp_player.transform.position.x -= player.speed * math.sin(math.radians(camera.yaw))
-        temp_player.transform.position.z -= player.speed * math.cos(math.radians(camera.yaw))
-    if keys[pygame.K_s]:
-        temp_player.transform.position.x += player.speed * math.sin(math.radians(camera.yaw))
-        temp_player.transform.position.z += player.speed * math.cos(math.radians(camera.yaw))
-
-    colliding = False
     for go in gameObjects:
-        if go.collider.is_colliding(temp_player):
-            colliding = True
-            break
+        if keys[pygame.K_w] and go.collider.is_colliding(t_front) and not colliding_front:
+            colliding_front = True
+        if keys[pygame.K_d] and go.collider.is_colliding(t_right) and not colliding_right:
+            colliding_right = True
+        if keys[pygame.K_s] and go.collider.is_colliding(t_back) and not colliding_back:
+            colliding_back = True
+        if keys[pygame.K_a] and go.collider.is_colliding(t_left) and not colliding_left:
+            colliding_left = True
 
-    if not colliding:
-        player.transform = temp_player.transform
+    if keys[pygame.K_a] and not colliding_front:
+        player.transform.position.x += player.speed * math.sin(math.radians(camera.yaw - 90))
+        player.transform.position.z += player.speed * math.cos(math.radians(camera.yaw - 90))
+    if keys[pygame.K_d] and not colliding_right:
+        player.transform.position.x -= player.speed * math.sin(math.radians(camera.yaw - 90))
+        player.transform.position.z -= player.speed * math.cos(math.radians(camera.yaw - 90))
+    if keys[pygame.K_w] and not colliding_back:
+        player.transform.position.x -= player.speed * math.sin(math.radians(camera.yaw))
+        player.transform.position.z -= player.speed * math.cos(math.radians(camera.yaw))
+    if keys[pygame.K_s] and not colliding_left:
+        player.transform.position.x += player.speed * math.sin(math.radians(camera.yaw))
+        player.transform.position.z += player.speed * math.cos(math.radians(camera.yaw))
 
     camera.move(pygame.mouse.get_rel())
-
     pygame.mouse.set_pos(display_width // 2, display_height // 2)
 
 
@@ -151,16 +169,19 @@ def render_scene():
 
     glEnable(GL_LIGHTING)
     glEnable(GL_LIGHT0)
-
     glEnable(GL_COLOR_MATERIAL)
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE)
 
     for o in gameObjects:
         o.draw()
 
+        if DEBUG:
+            o.collider.draw()
+
     glDisable(GL_TEXTURE_2D)
     glDisable(GL_LIGHTING)
     glDisable(GL_LIGHT0)
+    glDisable(GL_COLOR_MATERIAL)
 
     pygame.display.flip()
     pygame.time.wait(10)

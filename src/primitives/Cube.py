@@ -3,12 +3,6 @@ from OpenGL.GL import *
 
 class Cube:
     def draw(self, transform):
-        glEnable(GL_LIGHTING)
-        glEnable(GL_LIGHT0)
-
-        glEnable(GL_COLOR_MATERIAL)
-        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE)
-
         vertices = [
             [transform.scale.x / 2, -transform.scale.y / 2, -transform.scale.z / 2],
             [transform.scale.x / 2, -transform.scale.y / 2, transform.scale.z / 2],
