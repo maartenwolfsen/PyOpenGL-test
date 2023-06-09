@@ -3,25 +3,26 @@ from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from src.Player import Player
-from src.Camera import Camera
 from src.Texture import Texture
-
 from src.Vector3 import Vector3
 from src.GameObject import GameObject
 from src.Collider import Collider
 from src.components.Transform import Transform
 from src.primitives.Cube import Cube
 from src.primitives.Plane import Plane
+from src.Enemy import Enemy
+from src.Camera import Camera
+from src.Display import Display
 
 DEBUG = False
 pygame.init()
 
-display_width = 800
-display_height = 600
-display = pygame.display.set_mode((display_width, display_height), DOUBLEBUF | OPENGL)
+display = Display(800, 600)
+display.screen = pygame.display.set_mode((display.display_width, display.display_height), DOUBLEBUF | OPENGL)
 pygame.mouse.set_visible(False)
 
 player = Player()
+enemy = Enemy()
 camera = Camera()
 t1 = Transform(
     Vector3(0, -1, 0),
@@ -69,7 +70,7 @@ gameObjects = [
 texture = Texture()
 
 glMatrixMode(GL_PROJECTION)
-gluPerspective(45, (display_width / display_height), 0.1, 50.0)
+gluPerspective(45, (display.display_width / display.display_height), 0.1, 50.0)
 glLoadIdentity()
 
 glEnable(GL_DEPTH_TEST)
@@ -100,7 +101,16 @@ def handle_input():
 
     collide = False
     for o in gameObjects:
-        if o.collider.is_colliding(Transform(Vector3(player.transform.position.x, player.transform.position.y - player.velocity.y, player.transform.position.z), player.transform.rotation, player.transform.scale)):
+        if o.collider.is_colliding(
+                Transform(
+                    Vector3(
+                        player.transform.position.x,
+                        player.transform.position.y - player.velocity.y,
+                        player.transform.position.z
+                    ),
+                    player.transform.rotation,
+                    player.transform.scale
+                )):
             collide = True
             break
 
@@ -129,12 +139,12 @@ def handle_input():
         player.move_player('s', camera, gameObjects)
 
     camera.move(pygame.mouse.get_rel())
-    pygame.mouse.set_pos(display_width // 2, display_height // 2)
+    pygame.mouse.set_pos(display.display_width // 2, display.display_height // 2)
 
 
 def render_scene():
-    glViewport(0, 0, display_width, display_height)
-    gluPerspective(45, (display_width / display_height), 0.1, 50.0)
+    glViewport(0, 0, display.display_width, display.display_height)
+    gluPerspective(45, (display.display_width / display.display_height), 0.1, 50.0)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
     camera.update(player.transform.position)
@@ -158,10 +168,14 @@ def render_scene():
         if DEBUG:
             o.collider.draw()
 
+    enemy.draw()
+
     glDisable(GL_TEXTURE_2D)
     glDisable(GL_LIGHTING)
     glDisable(GL_LIGHT0)
     glDisable(GL_COLOR_MATERIAL)
+
+    display.draw_crosshair()
 
     pygame.display.flip()
     pygame.time.wait(10)
