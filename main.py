@@ -18,31 +18,31 @@ pygame.init()
 
 display_width = 800
 display_height = 600
-pygame.display.set_mode((display_width, display_height), DOUBLEBUF | OPENGL)
+display = pygame.display.set_mode((display_width, display_height), DOUBLEBUF | OPENGL)
 pygame.mouse.set_visible(False)
 
 player = Player()
 camera = Camera()
 t1 = Transform(
-            Vector3(0, -1, 0),
-            Vector3(1, 1, 1),
-            Vector3(100, 1, 100)
-        )
+    Vector3(0, -1, 0),
+    Vector3(1, 1, 1),
+    Vector3(100, 1, 100)
+)
 t2 = Transform(
-            Vector3(1, 0, 4),
-            Vector3(2, 2, 2),
-            Vector3(1, 1, 1)
-        )
+    Vector3(1, 0, 4),
+    Vector3(2, 2, 2),
+    Vector3(2, 2, 2)
+)
 t3 = Transform(
-            Vector3(-1, 0, 4),
-            Vector3(2, 2, 2),
-            Vector3(1, 1, 1)
-        )
+    Vector3(-5, 0, 4),
+    Vector3(2, 2, 2),
+    Vector3(2, 2, 2)
+)
 t4 = Transform(
-            Vector3(-2, -0.25, 4),
-            Vector3(2, 2, 2),
-            Vector3(1, 0.5, 1)
-        )
+    Vector3(-8, -0.5, 4),
+    Vector3(2, 2, 2),
+    Vector3(2, 1, 2)
+)
 gameObjects = [
     GameObject(
         t1,
@@ -68,16 +68,11 @@ gameObjects = [
 
 texture = Texture()
 
-glViewport(0, 0, display_width, display_height)
 glMatrixMode(GL_PROJECTION)
-glLoadIdentity()
 gluPerspective(45, (display_width / display_height), 0.1, 50.0)
-glMatrixMode(GL_MODELVIEW)
 glLoadIdentity()
 
 glEnable(GL_DEPTH_TEST)
-glEnable(GL_LIGHTING)
-glEnable(GL_LIGHT0)
 
 glLightfv(GL_LIGHT0, GL_POSITION, [1.5, 1.5, 1.5, 1.0])
 glLightfv(GL_LIGHT0, GL_AMBIENT, [0.2, 0.2, 0.2, 1.0])
@@ -139,8 +134,6 @@ def handle_input():
 
 def render_scene():
     glViewport(0, 0, display_width, display_height)
-    glMatrixMode(GL_PROJECTION)
-    glLoadIdentity()
     gluPerspective(45, (display_width / display_height), 0.1, 50.0)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
