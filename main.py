@@ -2,7 +2,6 @@ import pygame
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
-import math
 from src.Player import Player
 from src.Camera import Camera
 from src.Texture import Texture
@@ -14,7 +13,7 @@ from src.components.Transform import Transform
 from src.primitives.Cube import Cube
 from src.primitives.Plane import Plane
 
-DEBUG = True
+DEBUG = False
 pygame.init()
 
 display_width = 800
@@ -45,11 +44,11 @@ t4 = Transform(
             Vector3(1, 0.5, 1)
         )
 gameObjects = [
-    #GameObject(
-    #    t1,
-    #    Plane(),
-    #    Collider(t1)
-    #),
+    GameObject(
+        t1,
+        Plane(),
+        Collider(t1)
+    ),
     GameObject(
         t2,
         Cube(),
@@ -95,8 +94,32 @@ def handle_input():
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 quit()
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_SPACE and player.jumped:
+                player.jumped = False
 
     keys = pygame.key.get_pressed()
+
+    if player.velocity.y < player.drag:
+        player.velocity.y += player.gravity
+
+    collide = False
+    for o in gameObjects:
+        if o.collider.is_colliding(Transform(Vector3(player.transform.position.x, player.transform.position.y - player.velocity.y, player.transform.position.z), player.transform.rotation, player.transform.scale)):
+            collide = True
+            break
+
+    player.grounded = False
+
+    if collide:
+        player.velocity.y = 0
+        player.grounded = True
+
+    if keys[pygame.K_SPACE] and player.grounded and not player.jumped:
+        player.velocity.y = -player.jump_force
+        player.jumped = True
+
+    player.transform.position.y -= player.velocity.y
 
     if keys[pygame.K_a]:
         player.move_player('a', camera, gameObjects)
