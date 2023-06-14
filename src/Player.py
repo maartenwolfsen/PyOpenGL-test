@@ -32,7 +32,7 @@ class Player:
 
         collide = False
         for o in game_objects:
-            if o.collider.is_colliding(temp_collider):
+            if hasattr(o, "collider") and o.collider.is_colliding(temp_collider):
                 collide = True
                 break
 

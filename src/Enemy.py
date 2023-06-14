@@ -4,7 +4,8 @@ from OpenGL.GL import *
 
 
 class Enemy:
-    def __init__(self):
+    def __init__(self, id):
+        self.id = id
         self.transform = Transform(
             Vector3(4, 0, 4),
             Vector3(0, 0, 0),

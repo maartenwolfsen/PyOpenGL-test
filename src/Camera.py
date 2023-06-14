@@ -1,4 +1,6 @@
 from OpenGL.GL import *
+from src.Vector3 import Vector3
+import math
 
 
 class Camera:
@@ -17,3 +19,15 @@ class Camera:
         glRotatef(-self.pitch, 1, 0, 0)
         glRotatef(-self.yaw, 0, 1, 0)
         glTranslatef(-player_position.x, -player_position.y, -player_position.z)
+
+    def get_direction(self):
+        pitch = math.radians(self.pitch)
+        yaw = math.radians(self.yaw)
+
+        direction = Vector3(
+            math.cos(pitch) * math.sin(yaw),
+            math.sin(pitch),
+            -math.cos(pitch) * math.cos(yaw)
+        )
+
+        return direction.normalize()

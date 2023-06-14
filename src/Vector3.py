@@ -2,7 +2,7 @@ import math
 
 
 class Vector3:
-    def __init__(self, x, y, z):
+    def __init__(self, x=0, y=0, z=0):
         self.x = x
         self.y = y
         self.z = z
@@ -10,30 +10,37 @@ class Vector3:
     def __add__(self, other):
         if isinstance(other, Vector3):
             return Vector3(self.x + other.x, self.y + other.y, self.z + other.z)
+        elif isinstance(other, (int, float)):
+            return Vector3(self.x + other, self.y + other, self.z + other)
         else:
             raise TypeError("Unsupported operand type for +: Vector3 and {}".format(type(other)))
 
     def __sub__(self, other):
         if isinstance(other, Vector3):
             return Vector3(self.x - other.x, self.y - other.y, self.z - other.z)
+        elif isinstance(other, (int, float)):
+            return Vector3(self.x - other, self.y - other, self.z - other)
         else:
             raise TypeError("Unsupported operand type for -: Vector3 and {}".format(type(other)))
 
     def __mul__(self, other):
         if isinstance(other, (int, float)):
             return Vector3(self.x * other, self.y * other, self.z * other)
+        elif isinstance(other, Vector3):
+            return Vector3(self.x * other.x, self.y * other.y, self.z * other.z)
         else:
             raise TypeError("Unsupported operand type for *: Vector3 and {}".format(type(other)))
 
     def __rmul__(self, other):
-        # This allows scalar multiplication when the vector is on the right side of the operator
         return self.__mul__(other)
 
-    def __truediv__(self, scalar):
-        if isinstance(scalar, (int, float)):
-            return Vector3(self.x / scalar, self.y / scalar, self.z / scalar)
+    def __truediv__(self, other):
+        if isinstance(other, (int, float)):
+            return Vector3(self.x / other, self.y / other, self.z / other)
+        elif isinstance(other, Vector3):
+            return Vector3(self.x / other.x, self.y / other.y, self.z / other.z)
         else:
-            raise TypeError("Unsupported operand type for /: Vector3 and {}".format(type(scalar)))
+            raise TypeError("Unsupported operand type for /: Vector3 and {}".format(type(other)))
 
     def __neg__(self):
         return Vector3(-self.x, -self.y, -self.z)
@@ -52,6 +59,38 @@ class Vector3:
 
     def __repr__(self):
         return str(self)
+
+    def __gt__(self, other):
+        if isinstance(other, Vector3):
+            return self.length_squared() > other.length_squared()
+        elif isinstance(other, (int, float)):
+            return self.length_squared() > other
+        else:
+            raise TypeError("Unsupported operand type for >: Vector3 and {}".format(type(other)))
+
+    def __ge__(self, other):
+        if isinstance(other, Vector3):
+            return self.length_squared() >= other.length_squared()
+        elif isinstance(other, (int, float)):
+            return self.length_squared() >= other
+        else:
+            raise TypeError("Unsupported operand type for >=: Vector3 and {}".format(type(other)))
+
+    def __lt__(self, other):
+        if isinstance(other, Vector3):
+            return self.length_squared() < other.length_squared()
+        elif isinstance(other, (int, float)):
+            return self.length_squared() < other
+        else:
+            raise TypeError("Unsupported operand type for <: Vector3 and {}".format(type(other)))
+
+    def __le__(self, other):
+        if isinstance(other, Vector3):
+            return self.length_squared() <= other.length_squared()
+        elif isinstance(other, (int, float)):
+            return self.length_squared() <= other
+        else:
+            raise TypeError("Unsupported operand type for <=: Vector3 and {}".format(type(other)))
 
     def length(self):
         return math.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)

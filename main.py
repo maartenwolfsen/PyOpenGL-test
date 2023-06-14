@@ -13,6 +13,7 @@ from src.primitives.Plane import Plane
 from src.Enemy import Enemy
 from src.Camera import Camera
 from src.Display import Display
+from src.Ray import Ray
 
 DEBUG = False
 pygame.init()
@@ -22,7 +23,6 @@ display.screen = pygame.display.set_mode((display.display_width, display.display
 pygame.mouse.set_visible(False)
 
 player = Player()
-enemy = Enemy()
 camera = Camera()
 t1 = Transform(
     Vector3(0, -1, 0),
@@ -46,25 +46,30 @@ t4 = Transform(
 )
 gameObjects = [
     GameObject(
+        "ground",
         t1,
         Plane(),
         Collider(t1)
     ),
     GameObject(
+        "cube1",
         t2,
         Cube(),
         Collider(t2)
     ),
     GameObject(
+        "cube2",
         t3,
         Cube(),
         Collider(t3)
     ),
     GameObject(
+        "cube3",
         t4,
         Cube(),
         Collider(t4)
-    )
+    ),
+    Enemy("enemy1")
 ]
 
 texture = Texture()
@@ -93,6 +98,20 @@ def handle_input():
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_SPACE and player.jumped:
                 player.jumped = False
+        if event.type == pygame.MOUSEBUTTONUP:
+            ray = Ray(
+                Vector3(
+                    player.transform.position.x,
+                    player.transform.position.y,
+                    player.transform.position.z
+                ),
+                camera.get_direction()
+            )
+
+            for o in gameObjects:
+                if ray.intersect_ray_collider(o.transform):
+                    print(o.id)
+                    break
 
     keys = pygame.key.get_pressed()
 
@@ -101,7 +120,7 @@ def handle_input():
 
     collide = False
     for o in gameObjects:
-        if o.collider.is_colliding(
+        if hasattr(o, "collider") and o.collider.is_colliding(
                 Transform(
                     Vector3(
                         player.transform.position.x,
@@ -167,8 +186,6 @@ def render_scene():
 
         if DEBUG:
             o.collider.draw()
-
-    enemy.draw()
 
     glDisable(GL_TEXTURE_2D)
     glDisable(GL_LIGHTING)
