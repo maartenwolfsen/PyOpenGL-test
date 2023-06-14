@@ -5,9 +5,19 @@ from src.Vector3 import Vector3
 class Collider:
     def __init__(self, transform):
         self.transform = transform
+        self.bounds = self.calculate_bounds()
+
+    def calculate_bounds(self):
+        position = self.transform.position
+        rotation = self.transform.rotation
+        scale = self.transform.scale
+
+        min_bounds = position - scale / 2
+        max_bounds = position + scale / 2
+
+        return min_bounds, max_bounds
 
     def is_colliding(self, collider):
-        # Calculate the half-sizes of the bounding boxes
         self_half_size = self.transform.scale * 0.5
         collider_half_size = collider.scale * 0.5
 
@@ -32,9 +42,9 @@ class Collider:
 
         # Check for overlap along the separating axes
         separating_axes = [
-            Vector3(1, 0, 0),  # X-axis
-            Vector3(0, 1, 0),  # Y-axis
-            Vector3(0, 0, 1)  # Z-axis
+            Vector3(1, 0, 0),
+            Vector3(0, 1, 0),
+            Vector3(0, 0, 1)
         ]
 
         for axis in separating_axes:

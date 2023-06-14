@@ -44,6 +44,16 @@ t4 = Transform(
     Vector3(2, 2, 2),
     Vector3(2, 1, 2)
 )
+t4 = Transform(
+    Vector3(-8, -0.5, 4),
+    Vector3(2, 2, 2),
+    Vector3(2, 1, 2)
+)
+t5 = Transform(
+    Vector3(4, 0, 4),
+    Vector3(0, 0, 0),
+    Vector3(0.5, 2, 0.5)
+)
 gameObjects = [
     GameObject(
         "ground",
@@ -69,7 +79,12 @@ gameObjects = [
         Cube(),
         Collider(t4)
     ),
-    Enemy("enemy1")
+    GameObject(
+        "enemy1",
+        t5,
+        Cube(),
+        Collider(t5)
+    ),
 ]
 
 texture = Texture()
@@ -109,7 +124,7 @@ def handle_input():
             )
 
             for o in gameObjects:
-                if ray.intersect_ray_collider(o.transform):
+                if ray.intersect_ray_collider(o.collider):
                     print(o.id)
                     break
 

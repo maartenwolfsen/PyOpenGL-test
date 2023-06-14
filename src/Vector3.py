@@ -92,6 +92,26 @@ class Vector3:
         else:
             raise TypeError("Unsupported operand type for <=: Vector3 and {}".format(type(other)))
 
+    def __getitem__(self, index):
+        if index == 0:
+            return self.x
+        elif index == 1:
+            return self.y
+        elif index == 2:
+            return self.z
+        else:
+            raise IndexError("Vector3 index out of range")
+
+    def __setitem__(self, index, value):
+        if index == 0:
+            self.x = value
+        elif index == 1:
+            self.y = value
+        elif index == 2:
+            self.z = value
+        else:
+            raise IndexError("Vector3 index out of range")
+
     def length(self):
         return math.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
 
