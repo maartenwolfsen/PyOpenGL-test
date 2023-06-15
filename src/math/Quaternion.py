@@ -25,7 +25,7 @@ class Quaternion:
         return False
 
     def __mul__(self, other):
-        from src.Vector3 import Vector3
+        from src.math.Vector3 import Vector3
         if isinstance(other, Quaternion):
             w = (self.w * other.w) - (self.x * other.x) - (self.y * other.y) - (self.z * other.z)
             x = (self.w * other.x) + (self.x * other.w) + (self.y * other.z) - (self.z * other.y)
@@ -50,7 +50,7 @@ class Quaternion:
         return conjugate / magnitude_squared
 
     def magnitude(self):
-        return math.sqrt(self.magnitude_squared())
+        return src.math.sqrt(self.magnitude_squared())
 
     def magnitude_squared(self):
         return (self.w * self.w) + (self.x * self.x) + (self.y * self.y) + (self.z * self.z)

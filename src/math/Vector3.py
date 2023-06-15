@@ -1,5 +1,5 @@
 import math
-from src.Quaternion import Quaternion
+from src.math.Quaternion import Quaternion
 
 
 class Vector3:

@@ -1,4 +1,4 @@
-from src.Vector3 import Vector3
+from src.math.Vector3 import Vector3
 from src.components.Transform import Transform
 import math
 

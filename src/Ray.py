@@ -1,5 +1,5 @@
-from src.Vector3 import Vector3
-from src.Quaternion import Quaternion
+from src.math.Vector3 import Vector3
+from src.math.Quaternion import Quaternion
 
 
 class Ray:

@@ -5,7 +5,7 @@ from OpenGL.GLU import *
 from src.Scene import Scene
 from src.Player import Player
 from src.Texture import Texture
-from src.Vector3 import Vector3
+from src.math.Vector3 import Vector3
 from src.GameObject import GameObject
 from src.Collider import Collider
 from src.components.Transform import Transform
