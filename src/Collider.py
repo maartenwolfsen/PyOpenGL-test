@@ -9,7 +9,6 @@ class Collider:
 
     def calculate_bounds(self):
         position = self.transform.position
-        rotation = self.transform.rotation
         scale = self.transform.scale
 
         min_bounds = position - scale / 2
