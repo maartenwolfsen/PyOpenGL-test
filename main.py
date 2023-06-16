@@ -18,8 +18,6 @@ DEBUG = False
 
 display = Display(800, 600)
 
-glfw.make_context_current(display.screen)
-
 player = Player()
 camera = Camera()
 t1 = Transform(
