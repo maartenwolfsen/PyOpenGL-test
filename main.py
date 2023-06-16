@@ -1,5 +1,4 @@
-import pygame
-from pygame.locals import *
+import glfw
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from src.Scene import Scene
@@ -16,11 +15,21 @@ from src.Display import Display
 from src.Ray import Ray
 
 DEBUG = False
-pygame.init()
+if not glfw.init():
+    print("Failed to initialize GLFW\n")
+    quit()
 
 display = Display(800, 600)
-display.screen = pygame.display.set_mode((display.display_width, display.display_height), DOUBLEBUF | OPENGL)
-pygame.mouse.set_visible(False)
+
+if not display.screen:
+    print(
+        "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of "
+        "the tutorials.\n"
+    )
+    glfw.terminate()
+    quit()
+
+glfw.make_context_current(display.screen)
 
 player = Player()
 camera = Camera()
@@ -87,115 +96,15 @@ scene = Scene(
 
 texture = Texture()
 
-glMatrixMode(GL_PROJECTION)
-gluPerspective(45, (display.display_width / display.display_height), 0.1, 50.0)
-glLoadIdentity()
-
-glEnable(GL_DEPTH_TEST)
-
 glLightfv(GL_LIGHT0, GL_POSITION, [1.5, 1.5, 1.5, 1.0])
 glLightfv(GL_LIGHT0, GL_AMBIENT, [0.2, 0.2, 0.2, 1.0])
 glLightfv(GL_LIGHT0, GL_DIFFUSE, [10.0, 10.0, 10.0, 1.0])
 glLightfv(GL_LIGHT0, GL_SPECULAR, [1.0, 1.0, 1.0, 1.0])
 
 
-def handle_input():
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            quit()
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                quit()
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_SPACE and player.jumped:
-                player.jumped = False
-        if event.type == pygame.MOUSEBUTTONUP:
-            ray = Ray(
-                Vector3(
-                    player.transform.position.x + (player.transform.scale.x / 2),
-                    player.transform.position.y + (player.transform.scale.y / 2),
-                    player.transform.position.z + (player.transform.scale.z / 2)
-                ),
-                camera.get_direction()
-            )
-
-            for o in scene.game_objects:
-                hit = ray.intersect_ray_collider(o.collider)
-
-                if hit is not None:
-                    t = Transform(
-                        hit,
-                        Vector3(0, 0, 0),
-                        Vector3(0.5, 0.5, 0.5)
-                    )
-                    scene.add(
-                        GameObject(
-                            "hit" + str(ray.count),
-                            t,
-                            Cube(),
-                            Collider(t)
-                        )
-                    )
-
-                    for x in scene.game_objects:
-                        print(x.id)
-                        print(x.transform.position)
-
-                    break
-
-    keys = pygame.key.get_pressed()
-
-    if player.velocity.y < player.drag:
-        player.velocity.y += player.gravity
-
-    collide = False
-    for o in scene.game_objects:
-        if hasattr(o, "collider") and o.collider.is_colliding(
-                Transform(
-                    Vector3(
-                        player.transform.position.x,
-                        player.transform.position.y - player.velocity.y,
-                        player.transform.position.z
-                    ),
-                    player.transform.rotation,
-                    player.transform.scale
-                )):
-            collide = True
-            break
-
-    player.grounded = False
-
-    if collide:
-        player.velocity.y = 0
-        player.grounded = True
-
-    if keys[pygame.K_SPACE] and player.grounded and not player.jumped:
-        player.velocity.y = -player.jump_force
-        player.jumped = True
-
-    player.transform.position.y -= player.velocity.y
-
-    if keys[pygame.K_a]:
-        player.move_player('a', camera, scene.game_objects)
-
-    if keys[pygame.K_d]:
-        player.move_player('d', camera, scene.game_objects)
-
-    if keys[pygame.K_w]:
-        player.move_player('w', camera, scene.game_objects)
-
-    if keys[pygame.K_s]:
-        player.move_player('s', camera, scene.game_objects)
-
-    camera.move(pygame.mouse.get_rel())
-    pygame.mouse.set_pos(display.display_width // 2, display.display_height // 2)
-
-
 def render_scene():
-    glViewport(0, 0, display.display_width, display.display_height)
-    gluPerspective(45, (display.display_width / display.display_height), 0.1, 50.0)
+    glViewport(0, 0, display.width, display.height)
+    gluPerspective(45, (display.width / display.height), 0.1, 50.0)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
     camera.update(player.transform.position)
@@ -226,13 +135,109 @@ def render_scene():
 
     display.draw_crosshair()
 
-    pygame.display.flip()
-    pygame.time.wait(10)
+    glfw.swap_buffers(display.screen)
 
 
 texture_id = texture.load("assets/materials/brickwall.png")
 normal_map_texture_id = texture.load("assets/materials/brickwall_normal.png")
 
-while True:
-    handle_input()
-    render_scene()
+
+def key_event(window, key, scancode, action, mods):
+    if action == glfw.PRESS:
+        if key == glfw.KEY_ESCAPE:
+            glfw.terminate()
+            quit()
+        if key == glfw.KEY_SPACE and player.grounded and not player.jumped:
+            player.velocity.y = -player.jump_force
+            player.jumped = True
+        if key == glfw.KEY_A:
+            player.move_player('a', camera, scene.game_objects)
+        if key == glfw.KEY_D:
+            player.move_player('d', camera, scene.game_objects)
+        if key == glfw.KEY_W:
+            player.move_player('w', camera, scene.game_objects)
+        if key == glfw.KEY_S:
+            player.move_player('s', camera, scene.game_objects)
+
+
+def mouse_event(window, button, action, mods):
+    if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
+        ray = Ray(
+            Vector3(
+                player.transform.position.x + (player.transform.scale.x / 2),
+                player.transform.position.y + (player.transform.scale.y / 2),
+                player.transform.position.z + (player.transform.scale.z / 2)
+            ),
+            camera.get_direction()
+        )
+
+        for o in scene.game_objects:
+            hit = ray.intersect_ray_collider(o.collider)
+
+            if hit is not None:
+                t = Transform(
+                    hit,
+                    Vector3(0, 0, 0),
+                    Vector3(0.5, 0.5, 0.5)
+                )
+                scene.add(
+                    GameObject(
+                        "hit" + str(ray.count),
+                        t,
+                        Cube(),
+                        Collider(t)
+                    )
+                )
+
+                for x in scene.game_objects:
+                    print(x.id)
+                    print(x.transform.position)
+
+                break
+
+def main():
+    while not glfw.window_should_close(display.screen):
+        if player.velocity.y < player.drag:
+            player.velocity.y += player.gravity
+
+        collide = False
+
+        for o in scene.game_objects:
+            if hasattr(o, "collider") and o.collider.is_colliding(
+                    Transform(
+                        Vector3(
+                            player.transform.position.x,
+                            player.transform.position.y - player.velocity.y,
+                            player.transform.position.z
+                        ),
+                        player.transform.rotation,
+                        player.transform.scale
+                    )):
+                collide = True
+                break
+
+        player.grounded = False
+
+        if collide:
+            player.velocity.y = 0
+            player.grounded = True
+
+        glfw.set_input_mode(display.screen, glfw.STICKY_KEYS, GL_TRUE)
+        glfw.set_key_callback(display.screen, key_event)
+        glfw.set_mouse_button_callback(display.screen, mouse_event)
+
+        player.transform.position.y -= player.velocity.y
+        camera.move(display.get_relative_mouse_movement())
+        # pygame.mouse.set_pos(display.display_width // 2, display.display_height // 2)
+
+        glClearColor(0, 0, 0, 0)
+        render_scene()
+
+        if DEBUG:
+            print(f"Player Position: {player.transform.position}")
+
+        glfw.poll_events()
+
+
+if __name__ == "__main__":
+    main()
