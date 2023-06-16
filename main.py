@@ -15,19 +15,8 @@ from src.Display import Display
 from src.Ray import Ray
 
 DEBUG = False
-if not glfw.init():
-    print("Failed to initialize GLFW\n")
-    quit()
 
 display = Display(800, 600)
-
-if not display.screen:
-    print(
-        "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of "
-        "the tutorials.\n"
-    )
-    glfw.terminate()
-    quit()
 
 glfw.make_context_current(display.screen)
 
@@ -195,6 +184,17 @@ def mouse_event(window, button, action, mods):
 
                 break
 
+
+def cursor_pos_event(window, xpos, ypos):
+    mouse_x, mouse_y = glfw.get_cursor_pos(window)
+    mouse_movement_x = mouse_x - camera.last_mouse_x
+    mouse_movement_y = mouse_y - camera.last_mouse_y
+    camera.last_mouse_x = mouse_x
+    camera.last_mouse_y = mouse_y
+
+    camera.move((mouse_movement_x, mouse_movement_y))
+
+
 def main():
     while not glfw.window_should_close(display.screen):
         if player.velocity.y < player.drag:
@@ -225,10 +225,9 @@ def main():
         glfw.set_input_mode(display.screen, glfw.STICKY_KEYS, GL_TRUE)
         glfw.set_key_callback(display.screen, key_event)
         glfw.set_mouse_button_callback(display.screen, mouse_event)
+        glfw.set_cursor_pos_callback(display.screen, cursor_pos_event)
 
         player.transform.position.y -= player.velocity.y
-        camera.move(display.get_relative_mouse_movement())
-        # pygame.mouse.set_pos(display.display_width // 2, display.display_height // 2)
 
         glClearColor(0, 0, 0, 0)
         render_scene()

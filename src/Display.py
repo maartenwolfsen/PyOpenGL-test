@@ -6,9 +6,22 @@ import glfw
 
 class Display:
     def __init__(self, width, height):
+        if not glfw.init():
+            print("Failed to initialize GLFW\n")
+            quit()
+
         self.width = width
         self.height = height
         self.screen = glfw.create_window(width, height, "My Game", None, None)
+
+        if not self.screen:
+            print(
+                "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 "
+                "version of the tutorials.\n"
+            )
+            glfw.terminate()
+            quit()
+
         self.mouse_position = Vector2(0, 0)
 
         glfw.window_hint(glfw.SAMPLES, 4)
@@ -21,6 +34,8 @@ class Display:
         gluPerspective(45, (self.width / self.height), 0.1, 50.0)
         glLoadIdentity()
         glEnable(GL_DEPTH_TEST)
+        glfw.set_cursor_pos(self.screen, self.width / 2, self.height / 2)
+        glfw.set_input_mode(self.screen, glfw.CURSOR, glfw.CURSOR_DISABLED)
 
     def draw_crosshair(self):
         glMatrixMode(GL_PROJECTION)

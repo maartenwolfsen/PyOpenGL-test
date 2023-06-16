@@ -9,6 +9,8 @@ class Camera:
         self.mouse_sensitivity = 0.1
         self.yaw = 0.0
         self.pitch = 0.0
+        self.last_mouse_x = 0
+        self.last_mouse_y = 0
 
     def move(self, mouse_movement):
         self.yaw -= mouse_movement[0] * self.mouse_sensitivity
