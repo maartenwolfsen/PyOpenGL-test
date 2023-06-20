@@ -1,8 +1,20 @@
 from OpenGL.GL import *
+from src.Texture import Texture
 
 
 class Cube:
+    def __init__(self):
+        self.texture = Texture()
+        self.texture_id = self.texture.load("assets/materials/brickwall.png")
+        self.normal_map_texture_id = self.texture.load("assets/materials/brickwall_normal.png")
+
     def draw(self, transform):
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.texture_id)
+
+        glActiveTexture(GL_TEXTURE1)
+        glBindTexture(GL_TEXTURE_2D, self.normal_map_texture_id)
+
         vertices = [
             [transform.scale.x / 2, -transform.scale.y / 2, -transform.scale.z / 2],
             [transform.scale.x / 2, -transform.scale.y / 2, transform.scale.z / 2],

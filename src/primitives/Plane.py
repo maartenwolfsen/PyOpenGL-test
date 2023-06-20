@@ -1,13 +1,19 @@
 from OpenGL.GL import *
+from src.Texture import Texture
 
 
 class Plane:
-    def draw(self, transform):
-        glEnable(GL_LIGHTING)
-        glEnable(GL_LIGHT0)
+    def __init__(self):
+        self.texture = Texture()
+        self.texture_id = self.texture.load("assets/materials/brickwall.png")
+        self.normal_map_texture_id = self.texture.load("assets/materials/brickwall_normal.png")
 
-        glEnable(GL_COLOR_MATERIAL)
-        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE)
+    def draw(self, transform):
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.texture_id)
+
+        glActiveTexture(GL_TEXTURE1)
+        glBindTexture(GL_TEXTURE_2D, self.normal_map_texture_id)
 
         vertices = [
             [transform.scale.x / 2, 0.0, -transform.scale.x / 2],
@@ -25,7 +31,6 @@ class Plane:
             [0, 1]
         ]
 
-        glDisable(GL_TEXTURE_2D)
         glBegin(GL_QUADS)
         glNormal3fv(normal)
 
@@ -37,7 +42,3 @@ class Plane:
                 vertex[2] + transform.position.z
             ])
         glEnd()
-
-        glEnable(GL_TEXTURE_2D)
-        glEnable(GL_LIGHTING)
-        glEnable(GL_LIGHT0)
