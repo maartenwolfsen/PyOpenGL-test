@@ -6,10 +6,9 @@ from src.Player import Player
 from src.Texture import Texture
 from src.math.Vector3 import Vector3
 from src.GameObject import GameObject
-from src.Collider import Collider
+from src.components.Collider import Collider
 from src.components.Transform import Transform
 from src.primitives.Cube import Cube
-from src.primitives.Plane import Plane
 from src.Camera import Camera
 from src.Display import Display
 from src.Ray import Ray
@@ -17,70 +16,9 @@ from src.Ray import Ray
 DEBUG = False
 
 display = Display(800, 600)
-
 player = Player()
 camera = Camera()
-t1 = Transform(
-    Vector3(0, -1, 0),
-    Vector3(1, 1, 1),
-    Vector3(100, 1, 100)
-)
-t2 = Transform(
-    Vector3(1, 0, 4),
-    Vector3(2, 2, 2),
-    Vector3(2, 2, 2)
-)
-t3 = Transform(
-    Vector3(-5, 0, 4),
-    Vector3(2, 2, 2),
-    Vector3(2, 2, 2)
-)
-t4 = Transform(
-    Vector3(-8, -0.5, 4),
-    Vector3(2, 2, 2),
-    Vector3(2, 1, 2)
-)
-t5 = Transform(
-    Vector3(4, 0, 4),
-    Vector3(0, 0, 0),
-    Vector3(0.5, 2, 0.5)
-)
-scene = Scene(
-    "world1",
-    [
-        GameObject(
-            "ground",
-            t1,
-            Plane(),
-            Collider(t1)
-        ),
-        GameObject(
-            "cube1",
-            t2,
-            Cube(),
-            Collider(t2)
-        ),
-        GameObject(
-            "cube2",
-            t3,
-            Cube(),
-            Collider(t3)
-        ),
-        GameObject(
-            "cube3",
-            t4,
-            Cube(),
-            Collider(t4)
-        ),
-        GameObject(
-            "enemy1",
-            t5,
-            Cube(),
-            Collider(t5)
-        ),
-    ]
-)
-
+scene = Scene("world1")
 texture = Texture()
 
 glLightfv(GL_LIGHT0, GL_POSITION, [1.5, 1.5, 1.5, 1.0])
@@ -138,13 +76,46 @@ def key_event(window, key, scancode, action, mods):
             player.velocity.y = -player.jump_force
             player.jumped = True
         if key == glfw.KEY_A:
-            player.move_player('a', camera, scene.game_objects)
+            if player.move_vectors.x == -1.0:
+                player.move_vectors.x = 0
+            else:
+                player.move_vectors.x = 1.0
         if key == glfw.KEY_D:
-            player.move_player('d', camera, scene.game_objects)
+            if player.move_vectors.x == 1.0:
+                player.move_vectors.x = 0
+            else:
+                player.move_vectors.x = -1.0
         if key == glfw.KEY_W:
-            player.move_player('w', camera, scene.game_objects)
-        if key == glfw.KEY_S:
-            player.move_player('s', camera, scene.game_objects)
+            if player.move_vectors.y == -1.0:
+                player.move_vectors.y = 0
+            else:
+                player.move_vectors.y = 1.0
+        elif key == glfw.KEY_S:
+            if player.move_vectors.y == 1.0:
+                player.move_vectors.y = 0
+            else:
+                player.move_vectors.y = -1.0
+    elif action == glfw.RELEASE:
+        if key == glfw.KEY_A:
+            if player.move_vectors.x == 0.0:
+                player.move_vectors.x = -1.0
+            elif player.move_vectors.x == 1.0:
+                player.move_vectors.x = 0.0
+        elif key == glfw.KEY_D:
+            if player.move_vectors.x == 0.0:
+                player.move_vectors.x = 1.0
+            elif player.move_vectors.x == -1.0:
+                player.move_vectors.x = 0.0
+        elif key == glfw.KEY_W:
+            if player.move_vectors.y == 0.0:
+                player.move_vectors.y = -1.0
+            elif player.move_vectors.y == 1.0:
+                player.move_vectors.y = 0.0
+        elif key == glfw.KEY_S:
+            if player.move_vectors.y == 0.0:
+                player.move_vectors.y = 1.0
+            elif player.move_vectors.y == -1.0:
+                player.move_vectors.y = 0.0
 
 
 def mouse_event(window, button, action, mods):
@@ -195,6 +166,8 @@ def cursor_pos_event(window, xpos, ypos):
 
 def main():
     while not glfw.window_should_close(display.screen):
+        glfw.poll_events()
+
         if player.velocity.y < player.drag:
             player.velocity.y += player.gravity
 
@@ -210,7 +183,8 @@ def main():
                         ),
                         player.transform.rotation,
                         player.transform.scale
-                    )):
+                    )
+            ):
                 collide = True
                 break
 
@@ -219,21 +193,17 @@ def main():
         if collide:
             player.velocity.y = 0
             player.grounded = True
+            player.jumped = False
 
         glfw.set_input_mode(display.screen, glfw.STICKY_KEYS, GL_TRUE)
         glfw.set_key_callback(display.screen, key_event)
         glfw.set_mouse_button_callback(display.screen, mouse_event)
         glfw.set_cursor_pos_callback(display.screen, cursor_pos_event)
-
-        player.transform.position.y -= player.velocity.y
+        print(player.move_vectors)
+        player.move_player(camera, scene.game_objects)
 
         glClearColor(0, 0, 0, 0)
         render_scene()
-
-        if DEBUG:
-            print(f"Player Position: {player.transform.position}")
-
-        glfw.poll_events()
 
 
 if __name__ == "__main__":
