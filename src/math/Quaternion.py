@@ -25,6 +25,7 @@ class Quaternion:
         return False
 
     def __mul__(self, other):
+        from src.math.Vector2 import Vector2
         from src.math.Vector3 import Vector3
         if isinstance(other, Quaternion):
             w = (self.w * other.w) - (self.x * other.x) - (self.y * other.y) - (self.z * other.z)
@@ -37,6 +38,10 @@ class Quaternion:
             rotated_quat = self * vec_quat * self.conjugate()
             rotated_vec = Vector3(rotated_quat.x, rotated_quat.y, rotated_quat.z)
             return rotated_vec
+        elif isinstance(other, Vector2):
+            quaternion_vector = Quaternion(0, other.x, other.y, 0)
+            result_quaternion = self * quaternion_vector
+            return Vector2(result_quaternion.x, result_quaternion.y)
         elif isinstance(other, (int, float)):
             return Quaternion(self.w * other, self.x * other, self.y * other, self.z * other)
         return NotImplemented

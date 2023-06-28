@@ -65,7 +65,7 @@ class InputManager:
 
     def mouse_event(self, window, button, action, mods):
         if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
-            ray = Ray(
+            """ray = Ray(
                 Vector3(
                     self.player.transform.position.x + (self.player.transform.scale.x / 2),
                     self.player.transform.position.y + (self.player.transform.scale.y / 2),
@@ -93,10 +93,10 @@ class InputManager:
                     )
 
                     for x in self.scene.game_objects:
-                        print(x.id)
-                        print(x.transform.position)
 
-                    break
+                    break"""
+
+
 
     def cursor_pos_event(self, window,  xpos, ypos):
         mouse_x, mouse_y = glfw.get_cursor_pos(window)

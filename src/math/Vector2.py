@@ -1,4 +1,5 @@
 import math
+from src.math.Quaternion import Quaternion
 
 
 class Vector2:
@@ -15,6 +16,8 @@ class Vector2:
     def __sub__(self, other):
         if isinstance(other, Vector2):
             return Vector2(self.x - other.x, self.y - other.y)
+        elif isinstance(other, Quaternion):
+            return -other + self
         else:
             raise TypeError(f"Unsupported operand type for -: Vector2 and {type(other)}")
 
@@ -23,6 +26,8 @@ class Vector2:
             return Vector2(self.x * other, self.y * other)
         elif isinstance(other, Vector2):
             return Vector2(self.x * other.x, self.y * other.y)
+        elif isinstance(other, Quaternion):
+            return other * self
         else:
             raise TypeError(f"Unsupported operand type for *: Vector2 and {type(other)}")
 
@@ -137,6 +142,9 @@ class Vector2:
         x = self.x * cos_theta - self.y * sin_theta
         y = self.x * sin_theta + self.y * cos_theta
         return Vector2(x, y)
+
+    def conjugate(self):
+        return Vector2(self.x, -self.y)
 
     def magnitude(self):
         return math.sqrt(self.x ** 2 + self.y ** 2)

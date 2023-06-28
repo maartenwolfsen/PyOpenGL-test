@@ -1,6 +1,5 @@
 from OpenGL.GL import *
-from src.math.Vector3 import Vector3
-import math
+from src.math.Vector2 import Vector2
 
 
 class Camera:
@@ -23,13 +22,7 @@ class Camera:
         glTranslatef(-player_position.x, -player_position.y, -player_position.z)
 
     def get_direction(self):
-        pitch = math.radians(self.pitch)
-        yaw = math.radians(self.yaw)
-
-        direction = Vector3(
-            math.cos(pitch) * math.sin(yaw),
-            math.sin(pitch),
-            -math.cos(pitch) * math.cos(yaw)
+        return Vector2(
+            self.pitch,
+            self.yaw
         )
-
-        return direction.normalize()

@@ -1,5 +1,6 @@
 import math
 from src.math.Quaternion import Quaternion
+from src.math.Vector2 import Vector2
 
 
 class Vector3:
@@ -8,9 +9,18 @@ class Vector3:
         self.y = float(y)
         self.z = float(z)
 
+    def to_vector2(self):
+        return Vector2(self.x, self.y)
+
+    @classmethod
+    def from_vector2(cls, vector2, z=0.0):
+        return cls(vector2.x, vector2.y, z)
+
     def __add__(self, other):
         if isinstance(other, Vector3):
             return Vector3(self.x + other.x, self.y + other.y, self.z + other.z)
+        elif isinstance(other, Vector2):
+            return Vector3(self.x + other.x, self.y + other.y, self.z)
         elif isinstance(other, Quaternion):
             return other + self
         else:
@@ -19,6 +29,8 @@ class Vector3:
     def __sub__(self, other):
         if isinstance(other, Vector3):
             return Vector3(self.x - other.x, self.y - other.y, self.z - other.z)
+        elif isinstance(other, Vector2):
+            return Vector3(self.x - other.x, self.y - other.y, self.z)
         elif isinstance(other, Quaternion):
             return -other + self
         else:
@@ -29,6 +41,8 @@ class Vector3:
             return Vector3(self.x * other, self.y * other, self.z * other)
         elif isinstance(other, Vector3):
             return Vector3(self.x * other.x, self.y * other.y, self.z * other.z)
+        elif isinstance(other, Vector2):
+            return Vector3(self.x * other.x, self.y * other.y, self.z)
         elif isinstance(other, Quaternion):
             return other * self
         else:
@@ -47,6 +61,11 @@ class Vector3:
             if magnitude_squared == 0:
                 raise ZeroDivisionError("Division by zero is not allowed.")
             return Vector3(self.x / magnitude_squared, self.y / magnitude_squared, self.z / magnitude_squared)
+        elif isinstance(other, Vector2):
+            magnitude_squared = self.magnitude_squared()
+            if magnitude_squared == 0:
+                raise ZeroDivisionError("Division by zero is not allowed.")
+            return Vector3(self.x / magnitude_squared, self.y / magnitude_squared, self.z)
         else:
             raise TypeError("Unsupported operand type for division.")
 
