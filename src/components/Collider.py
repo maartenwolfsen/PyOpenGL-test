@@ -1,10 +1,16 @@
+from src.GameObject import GameObject
 from OpenGL.GL import *
 from src.math.Vector3 import Vector3
 
 
-class Collider:
-    def __init__(self, transform):
-        self.transform = transform
+class Collider(GameObject):
+    def __init__(self, label="origin"):
+        self.label = label
+        self.transform = None
+        self.bounds = None
+
+    def initialize(self):
+        self.transform = self.components["Transform"]
         self.bounds = self.calculate_bounds()
 
     def calculate_bounds(self):

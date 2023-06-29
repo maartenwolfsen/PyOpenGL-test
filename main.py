@@ -22,7 +22,7 @@ def main():
         glfw.poll_events()
 
         if player.velocity.y < player.drag:
-            player.velocity.y += player.gravity
+            player.velocity.y += scene.physics.gravity
 
         collide = False
 
@@ -53,6 +53,7 @@ def main():
         glfw.set_mouse_button_callback(display.screen, input_manager.mouse_event)
         glfw.set_cursor_pos_callback(display.screen, input_manager.cursor_pos_event)
         player.move_player(camera, scene.game_objects)
+        scene.physics.update()
 
         glClearColor(0, 0, 0, 0)
         scene.render(display, camera, player, DEBUG)

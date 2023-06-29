@@ -4,71 +4,30 @@ from src.GameObject import GameObject
 from src.math.Vector3 import Vector3
 from src.components.Transform import Transform
 from src.components.Collider import Collider
+from src.components.PhysicsBody import PhysicsBody
+from src.physics.PhysicsWorld import PhysicsWorld
 from OpenGL.GL import *
 from OpenGL.GLU import *
 import glfw
 
 
 class Scene:
-    def __init__(self, id):
-        self.id = id
-        t1 = Transform(
-            Vector3(0, -1, 0),
-            Vector3(1, 1, 1),
-            Vector3(100, 1, 100)
-        )
-        t2 = Transform(
-            Vector3(1, 0, 4),
-            Vector3(2, 2, 2),
-            Vector3(2, 2, 2)
-        )
-        t3 = Transform(
-            Vector3(-5, 0, 4),
-            Vector3(2, 2, 2),
-            Vector3(2, 2, 2)
-        )
-        t4 = Transform(
-            Vector3(-8, -0.5, 4),
-            Vector3(2, 2, 2),
-            Vector3(2, 1, 2)
-        )
-        t5 = Transform(
-            Vector3(4, 0, 4),
-            Vector3(0, 0, 0),
-            Vector3(0.5, 2, 0.5)
-        )
+    def __init__(self, label):
+        self.label = label
         self.game_objects = [
             GameObject(
-                "ground",
-                t1,
-                Plane(),
-                Collider(t1)
-            ),
-            GameObject(
-                "cube1",
-                t2,
+                "physObj1",
                 Cube(),
-                Collider(t2)
-            ),
-            GameObject(
-                "cube2",
-                t3,
-                Cube(),
-                Collider(t3)
-            ),
-            GameObject(
-                "cube3",
-                t4,
-                Cube(),
-                Collider(t4)
-            ),
-            GameObject(
-                "enemy1",
-                t5,
-                Cube(),
-                Collider(t5)
-            ),
+                Transform(
+                    Vector3(0, 2, -10),
+                    Vector3(0, 0, 0),
+                    Vector3(0.5, 0.5, 0.5)
+                ),
+                Collider(),
+                PhysicsBody()
+            )
         ]
+        self.physics = PhysicsWorld(self)
 
         glLightfv(GL_LIGHT0, GL_POSITION, [1.5, 1.5, 1.5, 1.0])
         glLightfv(GL_LIGHT0, GL_AMBIENT, [0.2, 0.2, 0.2, 1.0])

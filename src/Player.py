@@ -17,7 +17,6 @@ class Player:
         self.jump_force = 0.015
         self.grounded = True
         self.jumped = False
-        self.gravity = 0.00008
         self.speed = 0.005
 
     def move_player(self, camera, game_objects):
@@ -33,7 +32,7 @@ class Player:
             if not self.is_collision_detected(game_objects, new_position):
                 self.update_player_position(self.transform, new_position)
 
-        self.update_player_vertical_position(self.transform, self.velocity.y)
+        #self.update_player_vertical_position(self.transform, self.velocity.y)
 
     def calculate_forward_vector(self, yaw):
         angle = math.radians(yaw)
