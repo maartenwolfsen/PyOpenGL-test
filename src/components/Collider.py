@@ -6,16 +6,14 @@ from src.math.Vector3 import Vector3
 class Collider(GameObject):
     def __init__(self, label="origin"):
         self.label = label
-        self.transform = None
         self.bounds = None
 
     def initialize(self):
-        self.transform = self.components["Transform"]
         self.bounds = self.calculate_bounds()
 
     def calculate_bounds(self):
-        position = self.transform.position
-        scale = self.transform.scale
+        position = self.components["Transform"].position
+        scale = self.components["Transform"].scale
 
         min_bounds = position - scale / 2
         max_bounds = position + scale / 2
@@ -23,11 +21,11 @@ class Collider(GameObject):
         return min_bounds, max_bounds
 
     def is_colliding(self, collider):
-        self_half_size = self.transform.scale * 0.5
+        self_half_size = self.components["Transform"].scale * 0.5
         collider_half_size = collider.scale * 0.5
 
         # Calculate the centers of the bounding boxes
-        self_center = self.transform.position
+        self_center = self.components["Transform"].position
         collider_center = collider.position
 
         # Calculate the differences between the centers
@@ -72,14 +70,14 @@ class Collider(GameObject):
         glDisable(GL_LIGHT0)
 
         vertices = (
-            (self.transform.scale.x / 2 + 0.01, -self.transform.scale.y / 2 - 0.01, -self.transform.scale.z / 2 - 0.01),
-            (self.transform.scale.x / 2 + 0.01, self.transform.scale.y / 2 + 0.01, -self.transform.scale.z / 2 - 0.01),
-            (-self.transform.scale.x / 2 - 0.01, self.transform.scale.y / 2 + 0.01, -self.transform.scale.z / 2 - 0.01),
-            (-self.transform.scale.x / 2 - 0.01, -self.transform.scale.y / 2 - 0.01, -self.transform.scale.z / 2 - 0.01),
-            (self.transform.scale.x / 2 + 0.01, -self.transform.scale.y / 2 - 0.01, self.transform.scale.z / 2 + 0.01),
-            (self.transform.scale.x / 2 + 0.01, self.transform.scale.y / 2 + 0.01, self.transform.scale.z / 2 + 0.01),
-            (-self.transform.scale.x / 2 - 0.01, -self.transform.scale.y / 2 - 0.01, self.transform.scale.z / 2 + 0.01),
-            (-self.transform.scale.x / 2 - 0.01, self.transform.scale.y / 2 + 0.01, self.transform.scale.z / 2 + 0.01)
+            (self.components["Transform"].scale.x / 2 + 0.01, -self.components["Transform"].scale.y / 2 - 0.01, -self.components["Transform"].scale.z / 2 - 0.01),
+            (self.components["Transform"].scale.x / 2 + 0.01, self.components["Transform"].scale.y / 2 + 0.01, -self.components["Transform"].scale.z / 2 - 0.01),
+            (-self.components["Transform"].scale.x / 2 - 0.01, self.components["Transform"].scale.y / 2 + 0.01, -self.components["Transform"].scale.z / 2 - 0.01),
+            (-self.components["Transform"].scale.x / 2 - 0.01, -self.components["Transform"].scale.y / 2 - 0.01, -self.components["Transform"].scale.z / 2 - 0.01),
+            (self.components["Transform"].scale.x / 2 + 0.01, -self.components["Transform"].scale.y / 2 - 0.01, self.components["Transform"].scale.z / 2 + 0.01),
+            (self.components["Transform"].scale.x / 2 + 0.01, self.components["Transform"].scale.y / 2 + 0.01, self.components["Transform"].scale.z / 2 + 0.01),
+            (-self.components["Transform"].scale.x / 2 - 0.01, -self.components["Transform"].scale.y / 2 - 0.01, self.components["Transform"].scale.z / 2 + 0.01),
+            (-self.components["Transform"].scale.x / 2 - 0.01, self.components["Transform"].scale.y / 2 + 0.01, self.components["Transform"].scale.z / 2 + 0.01)
         )
 
         faces = (
@@ -100,9 +98,9 @@ class Collider(GameObject):
             glColor3fv(colors[0])
             for vertex in face:
                 glVertex3fv([
-                    vertices[vertex][0] + self.transform.position.x,
-                    vertices[vertex][1] + self.transform.position.y,
-                    vertices[vertex][2] + self.transform.position.z
+                    vertices[vertex][0] + self.components["Transform"].position.x,
+                    vertices[vertex][1] + self.components["Transform"].position.y,
+                    vertices[vertex][2] + self.components["Transform"].position.z
                 ])
         glEnd()
 

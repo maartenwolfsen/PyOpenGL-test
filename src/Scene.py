@@ -21,7 +21,7 @@ class Scene:
                 Transform(
                     Vector3(0, -1, 0),
                     Vector3(0, 0, 0),
-                    Vector3(10, 1, 10)
+                    Vector3(50, 1, 50)
                 ),
                 Collider()
             ),
@@ -64,7 +64,7 @@ class Scene:
             o.draw()
 
             if debug:
-                o.collider.draw()
+                o.components["Collider"].draw()
 
         display.draw_crosshair()
 

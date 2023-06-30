@@ -18,8 +18,6 @@ class GameObject:
 
     def draw(self):
         # TODO: Create a Mesh class
-        print(self.count)
-        print(self.components["Cube"])
         self.components["Cube"].draw(self.components["Transform"])
 
     def has(self, component):
