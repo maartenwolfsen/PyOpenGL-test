@@ -14,6 +14,9 @@ class PhysicsBody(GameObject):
         self.transform = self.components["Transform"]
 
     def update(self):
+        if self.transform is None:
+            return
+
         if not self.grounded:
             self.velocity.y = self.velocity.y + (0.00008 * self.mass)
 

@@ -5,8 +5,6 @@ class Ray:
         self.origin = origin
         self.direction = direction.normalize()
         Ray.count += 1
-        print(self.origin)
-        print(self.direction)
 
     def intersect_ray_collider(self, collider):
         min_bounds, max_bounds = collider.bounds

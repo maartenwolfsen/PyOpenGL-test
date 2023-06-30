@@ -16,6 +16,16 @@ class Scene:
         self.label = label
         self.game_objects = [
             GameObject(
+                "ground",
+                Cube(),
+                Transform(
+                    Vector3(0, -1, 0),
+                    Vector3(0, 0, 0),
+                    Vector3(10, 1, 10)
+                ),
+                Collider()
+            ),
+            GameObject(
                 "physObj1",
                 Cube(),
                 Transform(
