@@ -28,8 +28,13 @@ class Player:
             movement_vector = forward_vector * self.move_vectors.y + strafe_vector * self.move_vectors.x
             movement_vector = self.scale_vector(movement_vector, self.speed)
             new_position = self.transform.position + movement_vector
+            new = Transform(
+                new_position,
+                self.transform.rotation,
+                self.transform.scale
+            )
 
-            if not self.is_collision_detected(game_objects, new_position):
+            if not self.is_collision_detected(game_objects, new):
                 self.update_player_position(self.transform, new_position)
 
         #self.update_player_vertical_position(self.transform, self.velocity.y)
@@ -58,14 +63,10 @@ class Player:
             return ''
 
     def is_collision_detected(self, game_objects, new_position):
-        temp_collider = self.create_temporary_collider(new_position)
         for game_object in game_objects:
-            if hasattr(game_object, "collider") and game_object.collider.is_colliding(temp_collider):
+            if "Collider" in game_object.components and game_object.components["Collider"].is_colliding(new_position):
                 return True
         return False
-
-    def create_temporary_collider(self, new_position):
-        return Transform(new_position, self.transform.rotation, self.transform.scale)
 
     def update_player_position(self, transform, new_position):
         transform.position = new_position

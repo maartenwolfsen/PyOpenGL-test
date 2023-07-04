@@ -1,10 +1,4 @@
 import glfw
-from src.Ray import Ray
-from src.math.Vector3 import Vector3
-from src.GameObject import GameObject
-from src.primitives.Cube import Cube
-from src.components.Collider import Collider
-from src.components.Transform import Transform
 
 
 class InputManager:

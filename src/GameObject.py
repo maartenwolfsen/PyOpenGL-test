@@ -17,8 +17,7 @@ class GameObject:
         self.__class__.count += 1
 
     def draw(self):
-        # TODO: Create a Mesh class
-        self.components["Cube"].draw(self.components["Transform"])
+        self.components["Mesh"].draw(self.components["Transform"])
 
     def has(self, component):
         return component in self.components

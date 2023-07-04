@@ -1,5 +1,4 @@
-from src.primitives.Cube import Cube
-from src.primitives.Plane import Plane
+from src.components.Mesh import Mesh
 from src.GameObject import GameObject
 from src.math.Vector3 import Vector3
 from src.components.Transform import Transform
@@ -17,22 +16,22 @@ class Scene:
         self.game_objects = [
             GameObject(
                 "ground",
-                Cube(),
                 Transform(
-                    Vector3(0, -1, 0),
+                    Vector3(0, -10, 0),
                     Vector3(0, 0, 0),
                     Vector3(50, 1, 50)
                 ),
+                Mesh("cube"),
                 Collider()
             ),
             GameObject(
                 "physObj1",
-                Cube(),
                 Transform(
                     Vector3(0, 2, -10),
                     Vector3(0, 0, 0),
                     Vector3(0.5, 0.5, 0.5)
                 ),
+                Mesh("cube"),
                 Collider(),
                 PhysicsBody()
             )
