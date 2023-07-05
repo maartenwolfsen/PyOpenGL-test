@@ -5,7 +5,6 @@ from src.components.Transform import Transform
 
 class PhysicsBody(GameObject):
     def __init__(self, drag=0.005, mass=1):
-        self.transform = None
         self.velocity = Vector3(0, 0, 0)
         self.drag = drag
         self.mass = mass

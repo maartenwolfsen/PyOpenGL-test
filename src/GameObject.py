@@ -17,6 +17,9 @@ class GameObject:
         self.__class__.count += 1
 
     def draw(self):
+        if "Mesh" not in self.components:
+            return
+
         self.components["Mesh"].draw(self.components["Transform"])
 
     def has(self, component):

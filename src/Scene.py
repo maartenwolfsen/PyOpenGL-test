@@ -4,6 +4,8 @@ from src.math.Vector3 import Vector3
 from src.components.Transform import Transform
 from src.components.Collider import Collider
 from src.components.PhysicsBody import PhysicsBody
+from src.components.FirstPerson.Camera import Camera as FirstPersonCamera
+from src.components.FirstPerson.Controller import Controller as FirstPersonController
 from src.physics.PhysicsWorld import PhysicsWorld
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -34,6 +36,18 @@ class Scene:
                 Mesh("cube"),
                 Collider(),
                 PhysicsBody()
+            ),
+            GameObject(
+                "player",
+                Transform(
+                    Vector3(0, 0, 0),
+                    Vector3(0, 0, 0),
+                    Vector3(1, 1, 1)
+                ),
+                Collider(),
+                PhysicsBody(),
+                FirstPersonCamera(),
+                FirstPersonController()
             )
         ]
         self.physics = PhysicsWorld(self)
@@ -46,12 +60,22 @@ class Scene:
     def add(self, game_object):
         self.game_objects.append(game_object)
 
-    def render(self, display, camera, player, debug=False):
+    def update(self):
+        for go in self.game_objects:
+            if go.has("Camera"):
+                go.components["Camera"].update()
+            if go.has("Controller"):
+                go.components["Controller"].update(self.game_objects)
+
+        self.physics.update()
+
+    def render(self, display, debug=False):
         glViewport(0, 0, display.width, display.height)
         gluPerspective(45, (display.width / display.height), 0.1, 50.0)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
-        camera.update(player.transform.position)
+
+        self.update()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glEnable(GL_LIGHTING)
@@ -68,3 +92,8 @@ class Scene:
         display.draw_crosshair()
 
         glfw.swap_buffers(display.screen)
+
+    def get_game_object_by_component(self, component):
+        for go in self.game_objects:
+            if component in go.components:
+                return go
