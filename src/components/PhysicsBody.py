@@ -4,18 +4,17 @@ from src.components.Transform import Transform
 
 
 class PhysicsBody(GameObject):
-    def __init__(self, drag=0.005, mass=1):
+    def __init__(self, mass=1):
         self.velocity = Vector3(0, 0, 0)
-        self.drag = drag
         self.mass = mass
         self.grounded = False
 
-    def update(self, label, game_objects):
+    def update(self, label, game_objects, gravity, drag):
         if not self.grounded:
-            self.velocity.y = self.velocity.y + (0.00008 * self.mass)
+            self.velocity.y = self.velocity.y + (gravity * self.mass)
 
-            if self.velocity.y > self.drag:
-                self.velocity.y = self.drag
+            if self.velocity.y > drag:
+                self.velocity.y = drag
 
         new_t = Transform(
             self.components["Transform"].position,
@@ -31,6 +30,7 @@ class PhysicsBody(GameObject):
                 and "Collider" in game_object.components
                 and game_object.components["Collider"].is_colliding(new_t)
             ):
+                self.grounded = True
                 is_colliding = True
                 break
 
@@ -38,4 +38,7 @@ class PhysicsBody(GameObject):
             self.components["Transform"] = new_t
 
     def apply_force(self, force):
+        print(self.grounded)
+        print(self.velocity)
         self.velocity = self.velocity + force
+        print(self.velocity)

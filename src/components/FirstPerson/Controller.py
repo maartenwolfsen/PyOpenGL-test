@@ -9,6 +9,7 @@ class Controller(GameObject):
     def __init__(self, speed=0.005):
         self.speed = speed
         self.jumped = False
+        self.jump_force = -0.02
         self.move_vectors = Vector2(0.0, 0.0)
 
     def update(self, game_objects):
@@ -33,6 +34,12 @@ class Controller(GameObject):
             self.components["Transform"].position = new_position
 
         return
+
+    def jump(self):
+        if self.components["PhysicsBody"].grounded:
+            self.components["PhysicsBody"].grounded = False
+            self.components["PhysicsBody"].apply_force(Vector3(0, self.jump_force, 0))
+            self.jumped = True
 
     def is_colliding(self, game_objects, new_position):
         for go in game_objects:

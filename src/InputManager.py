@@ -11,9 +11,8 @@ class InputManager:
             if key == glfw.KEY_ESCAPE:
                 glfw.terminate()
                 quit()
-            """if key == glfw.KEY_SPACE and player.grounded and not player.jumped:
-                player.velocity.y = -player.jump_force
-                player.jumped = True"""
+            if key == glfw.KEY_SPACE:
+                player.jump()
             if key == glfw.KEY_A:
                 if player.move_vectors.x == -1.0:
                     player.move_vectors.x = 0
