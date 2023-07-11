@@ -65,7 +65,7 @@ class Scene:
             if go.has("Camera"):
                 go.components["Camera"].update()
             if go.has("Controller"):
-                go.components["Controller"].update(self.game_objects)
+                go.components["Controller"].update()
 
         self.physics.update()
 

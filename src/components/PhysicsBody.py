@@ -30,7 +30,10 @@ class PhysicsBody(GameObject):
                 and "Collider" in game_object.components
                 and game_object.components["Collider"].is_colliding(new_t)
             ):
-                self.grounded = True
+                if not self.grounded:
+                    self.grounded = True
+                    self.velocity = Vector3(0, 0, 0)
+
                 is_colliding = True
                 break
 
@@ -38,7 +41,4 @@ class PhysicsBody(GameObject):
             self.components["Transform"] = new_t
 
     def apply_force(self, force):
-        print(self.grounded)
-        print(self.velocity)
         self.velocity = self.velocity + force
-        print(self.velocity)

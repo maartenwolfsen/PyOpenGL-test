@@ -23,6 +23,8 @@ class Vector3:
             return Vector3(self.x + other.x, self.y + other.y, self.z)
         elif isinstance(other, Quaternion):
             return other + self
+        elif isinstance(other, float):
+            return Vector3(self.x + other, self.y + other, self.z + other)
         else:
             raise TypeError(f"Unsupported operand type for +: Vector3 and {type(other)}")
 
